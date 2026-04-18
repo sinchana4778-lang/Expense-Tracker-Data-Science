@@ -152,7 +152,7 @@ if not category_data.empty:
 st.subheader("🏆 Top 3 Expenses")
 
 top3 = filtered_df.sort_values(by="Amount", ascending=False).head(3)
-st.table(top3)
+st.dataframe(top3)
 
 # -----------------------------
 # DOWNLOAD DATA
