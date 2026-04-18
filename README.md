@@ -1,25 +1,32 @@
 # 💰 Expense Tracker App using Data Science
 
-## 📌 Overview
-The Expense Tracker App is a data-driven financial analytics project that helps users track, analyze, and visualize their spending behavior.
+## 🌐 Live Demo
+👉 https://expense-tracker-data-science-iwjuiktuqgwxljzkylvi7f.streamlit.app/
 
-This project simulates real-world financial data and provides insights through an interactive dashboard built using Streamlit.
+---
+
+## 📌 Overview
+The Expense Tracker App is a data-driven financial analytics dashboard that helps users track, analyze, and visualize their spending behavior.
+
+Built using Python and Streamlit, this project simulates real-world financial data and provides actionable insights for better financial decision-making.
+
+Expense tracking applications are widely used in FinTech platforms for budgeting, categorization, and behavioral analysis. :contentReference[oaicite:0]{index=0}
 
 ---
 
 ## 🎯 Problem Statement
-Managing personal expenses manually is difficult and often leads to:
-- Overspending
+Managing expenses manually often leads to:
 - Lack of financial awareness
+- Overspending
 - Poor budgeting decisions
 
 ---
 
 ## 💡 Solution
 This project provides:
-- Expense tracking system
-- Category-based analysis
-- Monthly trend visualization
+- Real-time expense tracking
+- Category-wise spending insights
+- Monthly trend analysis
 - Budget monitoring system
 - Smart financial insights
 
@@ -27,14 +34,14 @@ This project provides:
 
 ## 🚀 Features
 
-✔ Synthetic expense data generation  
-✔ Data cleaning & preprocessing  
+✔ Expense tracking using synthetic dataset  
 ✔ Category-wise spending analysis  
-✔ Monthly trend analysis  
-✔ Interactive dashboard (Streamlit)  
+✔ Monthly spending trends  
 ✔ Budget alert system  
-✔ Smart insights generation  
-✔ Downloadable filtered data  
+✔ Interactive dashboard (Streamlit + Plotly)  
+✔ Smart insights (highest/lowest spending)  
+✔ Top 3 expense detection  
+✔ Download filtered data  
 
 ---
 
@@ -43,7 +50,7 @@ This project provides:
 - Python  
 - Pandas  
 - NumPy  
-- Matplotlib  
+- Plotly  
 - Streamlit  
 
 ---
@@ -53,11 +60,11 @@ This project provides:
 ```
 Expense-Tracker-App/
 │
-├── data/              # Dataset files
-├── outputs/           # Generated charts
-├── images/            # Screenshots
-├── streamlit_app.py   # Dashboard UI
-├── main.py            # Data generation & analysis
+├── data/                  # Dataset
+├── outputs/               # Charts
+├── images/                # Screenshots
+├── streamlit_app.py       # Dashboard
+├── main.py                # Data processing
 ├── requirements.txt
 └── README.md
 ```
@@ -67,6 +74,12 @@ Expense-Tracker-App/
 ## ⚙️ Installation
 
 ```bash
+# Clone repository
+git clone https://github.com/your-username/Expense-Tracker-Data-Science.git
+
+# Navigate
+cd Expense-Tracker-Data-Science
+
 # Create virtual environment
 python -m venv venv
 
@@ -74,7 +87,7 @@ python -m venv venv
 venv\Scripts\activate
 
 # Install dependencies
-pip install pandas numpy matplotlib streamlit
+pip install -r requirements.txt
 ```
 
 ---
@@ -82,10 +95,10 @@ pip install pandas numpy matplotlib streamlit
 ## ▶️ How to Run
 
 ```bash
-# Step 1: Generate dataset
+# Run analysis script
 python main.py
 
-# Step 2: Run dashboard
+# Run Streamlit app
 streamlit run streamlit_app.py
 ```
 
@@ -93,22 +106,22 @@ streamlit run streamlit_app.py
 
 ## 📊 Outputs
 
-- Category-wise bar chart  
-- Monthly spending trend  
-- Expense distribution (pie chart)  
-- Budget alerts  
-- Smart insights  
+- 📊 Category-wise bar chart  
+- 🥧 Expense distribution pie chart  
+- 📈 Monthly trend analysis  
+- 💡 Budget alerts  
+- 🧠 Smart insights  
 
 ---
 
 ## 📸 Screenshots
 
 Add screenshots here:
-- Dashboard view  
+- Dashboard UI  
 - Category analysis  
 - Monthly trend  
 - Budget alert  
-- Insights  
+- Top expenses  
 
 ---
 
@@ -116,19 +129,18 @@ Add screenshots here:
 
 - Identifies highest spending category  
 - Detects overspending behavior  
-- Helps improve budgeting decisions  
+- Helps in financial planning  
 
 ---
 
 ## 🌍 Industry Relevance
 
-This project is relevant to:
-- FinTech platforms  
-- Banking analytics  
-- Personal finance applications  
+Expense tracking systems are widely used in:
+- FinTech apps  
+- Banking platforms  
+- Personal finance tools  
 
-Similar systems are used in:
-Google Pay, Paytm, PhonePe, Splitwise, Mint
+They help users analyze financial behavior and improve budgeting decisions. :contentReference[oaicite:1]{index=1}
 
 ---
 
@@ -144,7 +156,7 @@ Google Pay, Paytm, PhonePe, Splitwise, Mint
 
 ## 🚀 Future Improvements
 
-- Expense prediction using ML  
+- Machine Learning for expense prediction  
 - User authentication system  
 - Database integration  
 - Mobile app version  
@@ -157,5 +169,6 @@ Google Pay, Paytm, PhonePe, Splitwise, Mint
 
 ---
 
-## ⭐ If you like this project
-Give it a ⭐ on GitHub!
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
