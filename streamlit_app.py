@@ -8,13 +8,17 @@ import plotly.express as px
 st.set_page_config(page_title="Expense Tracker", layout="wide")
 
 # -----------------------------
-# HEADER
+# TITLE (Styled)
 # -----------------------------
-st.title("💰 Expense Tracker Dashboard")
+st.markdown(
+    "<h1 style='text-align: center; color: #4CAF50;'>💰 Expense Tracker Dashboard</h1>",
+    unsafe_allow_html=True
+)
+
 st.markdown("Analyze your spending patterns with interactive insights")
 
 # -----------------------------
-# LOAD DATA
+# LOAD DATA WITH SPINNER
 # -----------------------------
 @st.cache_data
 def load_data():
@@ -23,7 +27,8 @@ def load_data():
     df["Month"] = df["Date"].dt.to_period("M").astype(str)
     return df
 
-df = load_data()
+with st.spinner("Loading data..."):
+    df = load_data()
 
 # -----------------------------
 # SIDEBAR FILTERS
@@ -48,7 +53,14 @@ filtered_df = df[
 ]
 
 # -----------------------------
-# METRICS (CARDS STYLE)
+# SIDEBAR SUMMARY
+# -----------------------------
+st.sidebar.markdown("### 📊 Quick Summary")
+st.sidebar.write(f"Total Records: {len(filtered_df)}")
+st.sidebar.write(f"Total Spend: ₹ {filtered_df['Amount'].sum()}")
+
+# -----------------------------
+# METRICS
 # -----------------------------
 total_spent = filtered_df["Amount"].sum()
 avg_spent = filtered_df["Amount"].mean()
@@ -57,7 +69,7 @@ transactions = len(filtered_df)
 col1, col2, col3 = st.columns(3)
 
 col1.metric("💸 Total Spending", f"₹ {total_spent}")
-col2.metric("📊 Avg Transaction", f"₹ {round(avg_spent,2)}")
+col2.metric("📊 Avg Transaction", f"₹ {round(avg_spent, 2)}")
 col3.metric("🧾 Transactions", transactions)
 
 # -----------------------------
@@ -75,37 +87,50 @@ else:
     st.success(f"✅ Within Budget. ₹ {total_spent}")
 
 # -----------------------------
-# CHARTS (PLOTLY)
+# CHARTS
 # -----------------------------
 st.subheader("📊 Spending Analysis")
 
 col1, col2 = st.columns(2)
 
-# Bar Chart
 category_data = filtered_df.groupby("Category")["Amount"].sum().reset_index()
 
-fig_bar = px.bar(category_data, x="Category", y="Amount",
-                 title="Category-wise Spending",
-                 text_auto=True)
+# Bar Chart
+fig_bar = px.bar(
+    category_data,
+    x="Category",
+    y="Amount",
+    title="Category-wise Spending",
+    text_auto=True
+)
 
 col1.plotly_chart(fig_bar, use_container_width=True)
 
 # Pie Chart
-fig_pie = px.pie(category_data, names="Category", values="Amount",
-                 title="Expense Distribution")
+fig_pie = px.pie(
+    category_data,
+    names="Category",
+    values="Amount",
+    title="Expense Distribution"
+)
 
 col2.plotly_chart(fig_pie, use_container_width=True)
 
 # -----------------------------
-# MONTHLY TREND
+# MONTHLY TREND (FIXED SORTING)
 # -----------------------------
 st.subheader("📈 Monthly Trend")
 
 monthly_data = filtered_df.groupby("Month")["Amount"].sum().reset_index()
+monthly_data = monthly_data.sort_values("Month")
 
-fig_line = px.line(monthly_data, x="Month", y="Amount",
-                   markers=True,
-                   title="Monthly Spending Trend")
+fig_line = px.line(
+    monthly_data,
+    x="Month",
+    y="Amount",
+    markers=True,
+    title="Monthly Spending Trend"
+)
 
 st.plotly_chart(fig_line, use_container_width=True)
 
@@ -122,6 +147,14 @@ if not category_data.empty:
     st.write(f"🟢 Lowest Spending: **{lowest}**")
 
 # -----------------------------
+# TOP 3 EXPENSES
+# -----------------------------
+st.subheader("🏆 Top 3 Expenses")
+
+top3 = filtered_df.sort_values(by="Amount", ascending=False).head(3)
+st.table(top3)
+
+# -----------------------------
 # DOWNLOAD DATA
 # -----------------------------
 st.subheader("⬇️ Download Data")
@@ -136,7 +169,7 @@ st.download_button(
 )
 
 # -----------------------------
-# DATA TABLE
+# RAW DATA
 # -----------------------------
 st.subheader("📄 Raw Data")
 st.dataframe(filtered_df)
