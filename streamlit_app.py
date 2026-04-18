@@ -1,13 +1,17 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 # -----------------------------
 # PAGE CONFIG
 # -----------------------------
 st.set_page_config(page_title="Expense Tracker", layout="wide")
 
+# -----------------------------
+# HEADER
+# -----------------------------
 st.title("💰 Expense Tracker Dashboard")
+st.markdown("Analyze your spending patterns with interactive insights")
 
 # -----------------------------
 # LOAD DATA
@@ -24,16 +28,16 @@ df = load_data()
 # -----------------------------
 # SIDEBAR FILTERS
 # -----------------------------
-st.sidebar.header("Filters")
+st.sidebar.header("🔍 Filters")
 
 category_filter = st.sidebar.multiselect(
-    "Select Category",
+    "Category",
     options=df["Category"].unique(),
     default=df["Category"].unique()
 )
 
 payment_filter = st.sidebar.multiselect(
-    "Select Payment Method",
+    "Payment Method",
     options=df["Payment Method"].unique(),
     default=df["Payment Method"].unique()
 )
@@ -44,105 +48,83 @@ filtered_df = df[
 ]
 
 # -----------------------------
-# METRICS
+# METRICS (CARDS STYLE)
 # -----------------------------
 total_spent = filtered_df["Amount"].sum()
 avg_spent = filtered_df["Amount"].mean()
+transactions = len(filtered_df)
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 col1.metric("💸 Total Spending", f"₹ {total_spent}")
-col2.metric("📊 Average Spending", f"₹ {round(avg_spent, 2)}")
+col2.metric("📊 Avg Transaction", f"₹ {round(avg_spent,2)}")
+col3.metric("🧾 Transactions", transactions)
 
 # -----------------------------
-# CATEGORY ANALYSIS (BAR CHART)
+# BUDGET ALERT
 # -----------------------------
-st.subheader("Category-wise Spending")
-
-category_data = filtered_df.groupby("Category")["Amount"].sum()
-
-fig1, ax1 = plt.subplots()
-category_data.plot(kind='bar', ax=ax1)
-ax1.set_ylabel("Amount")
-ax1.set_xlabel("Category")
-st.pyplot(fig1)
-
-# -----------------------------
-# MONTHLY TREND (LINE CHART)
-# -----------------------------
-st.subheader("Monthly Spending Trend")
-
-monthly_data = filtered_df.groupby("Month")["Amount"].sum()
-
-fig2, ax2 = plt.subplots()
-monthly_data.plot(ax=ax2)
-ax2.set_ylabel("Amount")
-ax2.set_xlabel("Month")
-st.pyplot(fig2)
-
-# -----------------------------
-# PIE CHART
-# -----------------------------
-st.subheader("Expense Distribution")
-
-fig3, ax3 = plt.subplots()
-category_data.plot(kind='pie', autopct='%1.1f%%', ax=ax3)
-st.pyplot(fig3)
-
-# -----------------------------
-# INSIGHTS
-# -----------------------------
-st.subheader("Key Insights")
-
-if not category_data.empty:
-    top_category = category_data.idxmax()
-    st.write(f"🔹 Highest spending category: **{top_category}**")
-    st.write(f"🔹 Total transactions: **{len(filtered_df)}**")
-else:
-    st.write("No data available for selected filters.")
-    # -----------------------------
-# SMART INSIGHTS
-# -----------------------------
-st.subheader("Smart Insights")
-
-if not category_data.empty:
-    highest = category_data.idxmax()
-    lowest = category_data.idxmin()
-
-    st.write(f"🔴 Highest spending category: **{highest}**")
-    st.write(f"🟢 Lowest spending category: **{lowest}**")
-
-    if highest == "Shopping":
-        st.write("💡 Tip: Try reducing shopping expenses to save more.")
-    elif highest == "Food":
-        st.write("💡 Tip: Consider budgeting for food and dining.")
-    elif highest == "Travel":
-        st.write("💡 Tip: Plan trips to optimize travel expenses.")
-
-# -----------------------------
-# RAW DATA TABLE
-# -----------------------------
-st.subheader("Raw Data")
-st.dataframe(filtered_df)
-# -----------------------------
-# BUDGET ALERT SYSTEM
-# -----------------------------
-st.subheader("Budget Monitoring")
+st.subheader("💡 Budget Monitoring")
 
 budget = st.number_input("Set Monthly Budget (₹)", value=50000)
 
-current_spending = filtered_df["Amount"].sum()
-
-if current_spending > budget:
-    st.error(f"⚠️ Budget Exceeded! You spent ₹{current_spending}")
-elif current_spending > 0.8 * budget:
-    st.warning(f"⚠️ You are close to your budget! Spending: ₹{current_spending}")
+if total_spent > budget:
+    st.error(f"⚠️ Budget Exceeded! ₹ {total_spent}")
+elif total_spent > 0.8 * budget:
+    st.warning(f"⚠️ Near Budget Limit! ₹ {total_spent}")
 else:
-    st.success(f"✅ You are within budget. Spending: ₹{current_spending}")
-    # -----------------------------
+    st.success(f"✅ Within Budget. ₹ {total_spent}")
+
+# -----------------------------
+# CHARTS (PLOTLY)
+# -----------------------------
+st.subheader("📊 Spending Analysis")
+
+col1, col2 = st.columns(2)
+
+# Bar Chart
+category_data = filtered_df.groupby("Category")["Amount"].sum().reset_index()
+
+fig_bar = px.bar(category_data, x="Category", y="Amount",
+                 title="Category-wise Spending",
+                 text_auto=True)
+
+col1.plotly_chart(fig_bar, use_container_width=True)
+
+# Pie Chart
+fig_pie = px.pie(category_data, names="Category", values="Amount",
+                 title="Expense Distribution")
+
+col2.plotly_chart(fig_pie, use_container_width=True)
+
+# -----------------------------
+# MONTHLY TREND
+# -----------------------------
+st.subheader("📈 Monthly Trend")
+
+monthly_data = filtered_df.groupby("Month")["Amount"].sum().reset_index()
+
+fig_line = px.line(monthly_data, x="Month", y="Amount",
+                   markers=True,
+                   title="Monthly Spending Trend")
+
+st.plotly_chart(fig_line, use_container_width=True)
+
+# -----------------------------
+# SMART INSIGHTS
+# -----------------------------
+st.subheader("🧠 Smart Insights")
+
+if not category_data.empty:
+    highest = category_data.loc[category_data["Amount"].idxmax()]["Category"]
+    lowest = category_data.loc[category_data["Amount"].idxmin()]["Category"]
+
+    st.write(f"🔴 Highest Spending: **{highest}**")
+    st.write(f"🟢 Lowest Spending: **{lowest}**")
+
+# -----------------------------
 # DOWNLOAD DATA
 # -----------------------------
-st.subheader("Download Data")
+st.subheader("⬇️ Download Data")
 
 csv = filtered_df.to_csv(index=False).encode('utf-8')
 
@@ -152,3 +134,9 @@ st.download_button(
     file_name='filtered_expenses.csv',
     mime='text/csv',
 )
+
+# -----------------------------
+# DATA TABLE
+# -----------------------------
+st.subheader("📄 Raw Data")
+st.dataframe(filtered_df)
